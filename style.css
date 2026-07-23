@@ -142,11 +142,6 @@ body{
   transition: background .15s ease;
 }
 .add-bar__submit:hover{ background: rgba(255,255,255,0.2); }
-.add-bar__label{
-  color: rgba(255,255,255,0.85);
-  font-size: 12px;
-  flex-shrink: 0;
-}
 .add-bar__input{
   flex: 1;
   min-width: 0;
@@ -157,17 +152,6 @@ body{
   font-size: 14px;
 }
 .add-bar__input::placeholder{ color: rgba(255,255,255,0.78); }
-.add-bar__date{
-  border: none;
-  outline: none;
-  background: rgba(255,255,255,0.28);
-  color: #fff;
-  border-radius: 8px;
-  padding: 6px 8px;
-  font-size: 11.5px;
-  color-scheme: dark;
-  flex-shrink: 0;
-}
 
 /* ============ Block: page (본문 영역) ============ */
 .page{
@@ -219,9 +203,6 @@ body{
 }
 .task-card__body{ flex: 1; min-width: 0; }
 .task-card__title{ margin: 0; font-size: 14px; color: var(--ink); line-height: 1.4; word-break: break-word; }
-.task-card__date{ display: block; margin-top: 3px; font-size: 11px; color: var(--ink-soft); }
-.task-card__date--overdue{ color: var(--danger); font-weight: 600; }
-.task-card__date:empty{ display: none; }
 
 .task-card__delete{
   border: none;
@@ -309,8 +290,6 @@ body{
   padding: 10px 12px;
 }
 .history-card__title{ margin: 0; font-size: 14px; text-decoration: line-through; color: var(--ink-soft); word-break: break-word; }
-.history-card__date{ display: block; margin-top: 3px; font-size: 11px; color: var(--ink-soft); }
-.history-card__date:empty{ display: none; }
 .history-card__body{ flex: 1; min-width: 0; }
 .history-card__check{
   width: 20px; height: 20px;

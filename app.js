@@ -1,3 +1,19 @@
+/*
+ * To Do List v2 — 마감일 없는 버전
+ * FR1: 일정 추가 / FR2: 일정 삭제
+ *
+ * 구조:
+ *   1. 상수
+ *   2. 상태(state) 정의
+ *   3. DOM 참조
+ *   4. 저장소(storage) 함수 — localStorage 입출력만 담당
+ *   5. 상태 변경(mutation) 함수 — state 배열을 바꾸는 일만 담당, DOM을 직접 건드리지 않는다
+ *   6. 입력 검증 함수
+ *   7. 렌더링(render) 함수 — state를 읽어 DOM에 반영하는 일만 담당, state를 바꾸지 않는다
+ *   8. 이벤트 위임 핸들러
+ *   9. 초기화
+ */
+
 (() => {
   // ---------------------------------------------------------------------
   // 1. 상수 — 코드에 그대로 등장하는 의미 있는 숫자/문자열에 이름을 붙인다
@@ -6,13 +22,10 @@
   const STORAGE_KEY_HISTORY = 'todo-v2-history';
 
   const TASK_TITLE_MAX_LENGTH = 120;   // 일정 제목 최대 글자 수 (JS에서도 재검증)
-  const ISO_DATE_STRING_LENGTH = 10;   // 'YYYY-MM-DD' 형식 길이
   const ID_RANDOM_START_INDEX = 2;     // 임시 id 생성 시 랜덤 문자열 시작 위치
   const ID_RANDOM_END_INDEX = 6;       // 임시 id 생성 시 랜덤 문자열 끝 위치
-  const DATE_PART_PAD_LENGTH = 2;      // 월/일을 '05'처럼 두 자리로 맞출 때 사용
 
-  const PAST_DATE_CONFIRM_MESSAGE = '이전 날짜입니다. 그래도 일정을 추가하시겠습니까?';
-  const DUPLICATE_TASK_CONFIRM_MESSAGE = '같은 내용과 같은 날짜의 일정이 이미 있어요. 그래도 추가하시겠습니까?';
+  const DUPLICATE_TASK_CONFIRM_MESSAGE = '같은 내용의 일정이 이미 있어요. 그래도 추가하시겠습니까?';
 
   // 상위 요소 하나에서 이벤트를 위임받았을 때, data-action 값에 따라
   // 어떤 상태 변경 함수를 실행할지 매핑한다 (switch문 대신 객체 맵 사용)
@@ -42,7 +55,6 @@
   const historyCardTemplate = document.getElementById('historyCardTemplate');
   const addForm = document.getElementById('addForm');
   const taskTitleInput = document.getElementById('taskTitleInput');
-  const taskDateInput = document.getElementById('taskDateInput');
   const todoCountEl = document.getElementById('todoCount');
   const doneCountEl = document.getElementById('doneCount');
   const historyOpenBtn = document.getElementById('historyOpenBtn');
@@ -91,10 +103,10 @@
     return `${Date.now().toString(36)}${randomPart}`;
   }
 
-  // createTaskRecord(title, date): 검증된 제목/날짜로 새 일정 객체를 만들어 반환한다.
+  // createTaskRecord(title): 검증된 제목으로 새 일정 객체를 만들어 반환한다.
   // 이 함수는 배열에 넣는 일은 하지 않고, 객체를 만들기만 한다.
-  function createTaskRecord(title, date) {
-    return { id: generateTaskId(), title, date, completedAt: null };
+  function createTaskRecord(title) {
+    return { id: generateTaskId(), title, completedAt: null };
   }
 
   // addTaskToActive(task): 새 일정을 진행 목록 맨 앞(최신 항목 자리)에 추가한다.
@@ -127,8 +139,6 @@
     state.active.unshift(targetTask);
   }
 
-
-
   // ---------------------------------------------------------------------
   // 6. 입력 검증 — HTML의 maxlength 속성만 믿지 않고 JS에서도 다시 검사한다
   // ---------------------------------------------------------------------
@@ -141,58 +151,22 @@
     return trimmed.slice(0, TASK_TITLE_MAX_LENGTH);
   }
 
-  // sanitizeTaskDate(rawDate): 'YYYY-MM-DD' 형식이 아니면 빈 문자열로 처리한다.
-  function sanitizeTaskDate(rawDate) {
-    if (typeof rawDate !== 'string') return '';
-    if (rawDate.length !== ISO_DATE_STRING_LENGTH) return '';
-    return rawDate;
+  // findDuplicateActiveTask(title): 진행 목록(state.active) 안에서
+  // 제목이 동일한 일정이 이미 있는지 찾아 반환한다. 없으면 undefined.
+  function findDuplicateActiveTask(title) {
+    return state.active.find((task) => task.title === title);
   }
 
   // ---------------------------------------------------------------------
   // 7. 렌더링 함수 — state를 읽어 화면에 반영하기만 한다 (state를 바꾸지 않는다)
   // ---------------------------------------------------------------------
 
-  // isDateBeforeToday(dateString): 전달된 날짜가 오늘보다 이전인지만 판단해 반환한다.
-  // 일정 추가 시 검증과, 목록 렌더링 시 지난 일정 표시에 공통으로 사용한다.
-  function isDateBeforeToday(dateString) {
-    if (!dateString) return false;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return new Date(`${dateString}T00:00:00`) < today;
-  }
-
-  // isTaskOverdue(dateString): 목록에 표시할 때 지난 일정인지 여부를 판단한다.
-  function isTaskOverdue(dateString) {
-    return isDateBeforeToday(dateString);
-  }
-
-  // findDuplicateActiveTask(title, date): 진행 목록(state.active) 안에서
-  // 제목과 날짜가 모두 동일한 일정이 이미 있는지 찾아 반환한다. 없으면 undefined.
-  function findDuplicateActiveTask(title, date) {
-    return state.active.find((task) => task.title === title && task.date === date);
-  }
-
-  // formatDateLabel(dateString): 'YYYY-MM-DD'를 화면 표시용 'MM.DD'로 바꾼다.
-  function formatDateLabel(dateString) {
-    if (!dateString) return '';
-    const dateObject = new Date(`${dateString}T00:00:00`);
-    const month = String(dateObject.getMonth() + 1).padStart(DATE_PART_PAD_LENGTH, '0');
-    const day = String(dateObject.getDate()).padStart(DATE_PART_PAD_LENGTH, '0');
-    return `${month}.${day}`;
-  }
-
   // buildTaskCardElement(task): 진행 목록 카드 하나를 템플릿으로부터 만들어 반환한다.
   // 이벤트 리스너를 개별로 붙이지 않고, data-id/data-action만 표시해 상위에서 위임 처리한다.
   function buildTaskCardElement(task) {
     const cardEl = taskCardTemplate.content.firstElementChild.cloneNode(true);
     cardEl.dataset.id = task.id;
-
     cardEl.querySelector('.task-card__title').textContent = task.title;
-
-    const dateEl = cardEl.querySelector('.task-card__date');
-    dateEl.textContent = task.date ? formatDateLabel(task.date) : '';
-    dateEl.classList.toggle('task-card__date--overdue', isTaskOverdue(task.date));
-
     return cardEl;
   }
 
@@ -201,7 +175,6 @@
     const cardEl = historyCardTemplate.content.firstElementChild.cloneNode(true);
     cardEl.dataset.id = task.id;
     cardEl.querySelector('.history-card__title').textContent = task.title;
-    cardEl.querySelector('.history-card__date').textContent = task.date ? formatDateLabel(task.date) : '';
     return cardEl;
   }
 
@@ -241,8 +214,8 @@
   //    부모 요소(ul) 하나에만 리스너를 걸고 e.target으로 대상을 판단한다.
   // ---------------------------------------------------------------------
 
-  // handleAddFormSubmit(event): FR1. 입력값을 검증한 뒤, 과거 날짜인지와
-  // 동일한 제목+날짜의 일정이 이미 있는지 차례로 확인하고, 사용자가 승인한 경우에만 추가한다.
+  // handleAddFormSubmit(event): FR1. 입력값을 검증한 뒤, 동일한 제목의 일정이
+  // 이미 있는지 확인하고, 사용자가 승인한 경우에만 추가한다.
   function handleAddFormSubmit(event) {
     event.preventDefault();
 
@@ -251,20 +224,14 @@
       taskTitleInput.focus();
       return;
     }
-    const validDate = sanitizeTaskDate(taskDateInput.value);
 
-    if (isDateBeforeToday(validDate)) {
-      const shouldCreateWithPastDate = window.confirm(PAST_DATE_CONFIRM_MESSAGE);
-      if (!shouldCreateWithPastDate) return;
-    }
-
-    const duplicateTask = findDuplicateActiveTask(validTitle, validDate);
+    const duplicateTask = findDuplicateActiveTask(validTitle);
     if (duplicateTask) {
       const shouldCreateDuplicate = window.confirm(DUPLICATE_TASK_CONFIRM_MESSAGE);
       if (!shouldCreateDuplicate) return;
     }
 
-    const newTask = createTaskRecord(validTitle, validDate);
+    const newTask = createTaskRecord(validTitle);
     addTaskToActive(newTask);
     persistActive();
     renderAll();
@@ -357,7 +324,6 @@
   function initializeApp() {
     state.active = readListFromStorage(STORAGE_KEY_ACTIVE);
     state.history = readListFromStorage(STORAGE_KEY_HISTORY);
-    taskDateInput.value = new Date().toISOString().slice(0, ISO_DATE_STRING_LENGTH);
     renderAll();
   }
 

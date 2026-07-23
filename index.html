@@ -13,10 +13,11 @@
 <header class="topbar">
   <div class="topbar__inner">
     <span class="topbar__brand">
+      <span class="topbar__brand-mark" aria-hidden="true">✓</span>
       To Do List
     </span>
     <button type="button" class="topbar__history-btn" id="historyOpenBtn" aria-label="완료한 일 기록 패널 열기">
-      완료 기록
+      <span aria-hidden="true">🕘</span> 완료 기록
     </button>
   </div>
 </header>
@@ -36,8 +37,6 @@
       <button type="submit" class="add-bar__submit" aria-label="일정 추가">＋</button>
       <label class="sr-only" for="taskTitleInput">할 일 제목</label>
       <input type="text" id="taskTitleInput" class="add-bar__input" placeholder="Add a task..." autocomplete="off">
-      <label class="add-bar__label" for="taskDateInput">마감일</label>
-      <input type="date" id="taskDateInput" class="add-bar__date">
     </form>
   </div>
 </section>
@@ -67,7 +66,6 @@
     <button type="button" class="task-card__checkbox" data-action="complete" aria-label="완료로 표시"></button>
     <div class="task-card__body">
       <p class="task-card__title"></p>
-      <span class="task-card__date"></span>
     </div>
     <button type="button" class="task-card__delete" data-action="delete" aria-label="일정 삭제">🗑</button>
   </li>
@@ -78,7 +76,6 @@
     <button type="button" class="history-card__check" data-action="restore" aria-label="진행 목록으로 복원">✓</button>
     <div class="history-card__body">
       <p class="history-card__title"></p>
-      <span class="history-card__date"></span>
     </div>
     <button type="button" class="history-card__delete" data-action="delete" aria-label="기록 삭제">🗑</button>
   </li>
