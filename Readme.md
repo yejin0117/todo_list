@@ -1,17 +1,16 @@
 # To Do List (HTML/CSS/JS)
 
 ## 프로젝트 개요
-HTML, CSS, JavaScript(Vanilla)만으로 구현한 웹 기반 To Do List입니다.
+HTML, CSS, JavaScript으로 구현한 웹 기반 To Do List입니다.
 일정을 추가(FR1)하고 삭제(FR2)하는 핵심 기능을 중심으로, 완료 처리와 완료 기록 조회 기능을 추가로 구현했습니다.
 별도의 서버나 프레임워크 없이 브라우저의 localStorage만으로 데이터를 저장하며, 데스크탑과 모바일 화면 모두에서 자연스럽게 늘어나는 반응형 웹 레이아웃으로 설계되었습니다.
 
 ## 주요 기능
-- 일정 추가 (FR1) — 제목과 마감일을 입력해 새 일정을 등록
+- 일정 추가 (FR1) — 제목을 입력해 새 일정을 등록
 - 일정 삭제 (FR2) — 각 일정 카드의 삭제 버튼으로 즉시 제거
 - 완료 처리 — 체크 버튼 클릭 시 완료 기록으로 이동
 - 완료 기록 조회 — 상단 "완료 기록" 버튼을 눌러 오른쪽 슬라이드 패널에서 확인, 복원도 가능
-- 지난 날짜 등록 시 확인창 안내
-- 동일 제목+동일 날짜 일정 등록 시 중복 확인창 안내
+- 동일한 제목으로 일정 등록 시 중복 확인창 안내
 - 상단 TODO(해야할일) / DONE(완료한일) 개수 실시간 표시
 - localStorage 기반 데이터 저장으로 새로고침 후에도 유지
 
@@ -20,7 +19,7 @@ HTML, CSS, JavaScript(Vanilla)만으로 구현한 웹 기반 To Do List입니다
 
 ## 사용 방법
 ```
-＋ 버튼 / Enter 키   : 입력한 제목·마감일로 일정 추가 (FR1)
+＋ 버튼 / Enter 키   : 입력한 제목으로 일정 추가 (FR1)
 🗑 버튼             : 해당 일정 삭제 (FR2)
 ○ 체크 버튼         : 일정을 완료 처리 (완료 기록으로 이동)
 🕘 완료 기록 버튼    : 완료한 일정 목록 패널 열기
@@ -29,16 +28,16 @@ HTML, CSS, JavaScript(Vanilla)만으로 구현한 웹 기반 To Do List입니다
 
 ## 디렉터리 구조
 ```
-todo-v2/
+todo_list/
 ├── index.html
 ├── style.css
 └── app.js
 ```
 
 ## 사용된 기술 스택
-- HTML5 (시맨틱 태그, `<template>`)
-- CSS3 (Flexbox, BEM 클래스 네이밍)
-- JavaScript (Vanilla, ES6+, 이벤트 위임)
+- HTML5
+- CSS3
+- JavaScript
 - Web Storage API (localStorage)
 - 폰트: Google Fonts (Poppins, Inter)
 
@@ -47,4 +46,3 @@ todo-v2/
 - 태그·카테고리별 분류 및 필터링
 - 서버 연동을 통한 다중 기기 데이터 동기화
 - 반복 일정(매일/매주) 등록 기능
-- 접근성(ARIA) 속성 추가 보강 및 키보드 내비게이션 개선

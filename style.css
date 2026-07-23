@@ -32,7 +32,6 @@ body{
   border: 0;
 }
 
-/* ============ Block: topbar ============ */
 .topbar{
   background: var(--card);
   border-bottom: 1px solid var(--card-border);
@@ -78,7 +77,6 @@ body{
 }
 .topbar__history-btn:hover{ background: var(--purple-soft); border-color: var(--purple); }
 
-/* ============ Block: hero ============ */
 .hero{
   background: linear-gradient(120deg, var(--purple) 0%, #a99bf0 55%, #f0a8c9 130%);
   padding: 36px 24px 56px;
@@ -118,7 +116,6 @@ body{
 .hero__stat strong{ font-size: 13px; font-weight: 700; }
 .hero__stat--done{ background: rgba(255,255,255,0.32); }
 
-/* ============ Block: add-bar (FR1 입력 영역) ============ */
 .add-bar{
   display: flex;
   align-items: center;
@@ -153,7 +150,6 @@ body{
 }
 .add-bar__input::placeholder{ color: rgba(255,255,255,0.78); }
 
-/* ============ Block: page (본문 영역) ============ */
 .page{
   max-width: 920px;
   margin: -30px auto 0;
@@ -179,7 +175,6 @@ body{
 }
 .page__list:empty ~ .page__empty{ display: block; }
 
-/* ============ Block: task-card ============ */
 .task-card{
   display: flex;
   align-items: center;
@@ -219,7 +214,6 @@ body{
 .task-card__delete:hover,
 .history-card__delete:hover{ opacity: 1 !important; }
 
-/* ============ Block: history-overlay ============ */
 .history-overlay{
   position: fixed;
   inset: 0;
@@ -280,7 +274,6 @@ body{
 }
 .history-overlay__list:empty ~ .history-overlay__empty{ display: block; }
 
-/* ============ Block: history-card ============ */
 .history-card{
   display: flex;
   align-items: center;
